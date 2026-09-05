@@ -2,11 +2,16 @@ import { useContext } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { userDataContext } from "../assets/context/UserDataContext";
 import dp from "../assets/dp.png"
+import axios from "axios"
 import { MdAdd } from "react-icons/md";
 import { FaCamera } from "react-icons/fa";
 import { useState } from "react"
+import { useRef } from "react"
+import { authDataContext } from "../assets/context/AuthDataContext";
 function EditProfile() {
-    let { setEdit, userData } = useContext(userDataContext)
+    
+    let {serverUrl}=useContext(authDataContext)
+    let { setEdit, userData, setUserData} = useContext(userDataContext)
     let [firstName, setFirstName] = useState(userData.firstName || "")
     let [lastName, setLastName] = useState(userData.lastName || "")
     let [userName, setUserName] = useState(userData.userName || "")
@@ -24,9 +29,20 @@ function EditProfile() {
     let [experience, setExperience] = useState(userData.experience || [])
     let [newExperience, setNewExperience] = useState({
         title: "",
-            company: "",
-            description:""
+        company: "",
+        description: ""
     })
+
+    let [frontendProfileImage,setFrontendProfileImage]=useState(userData.profileImage||dp)
+    let [backendProfileImage,setBackendProfileImage]=useState(null)
+    let [frontendCoverImage,setFrontendCoverImage]=useState(userData.coverImage||null)
+    let [backendCoverImage,setBackendCoverImage]=useState(null)
+    let [saving,setSaving]=useState(false)
+    
+    
+    const profileImage = useRef()
+    const coverImage = useRef()
+
 
 
     function addSkill(e) {
@@ -65,9 +81,9 @@ function EditProfile() {
         e.preventDefault()
         if (newExperience.title && newExperience.company && newExperience.description) { setExperience([...experience, newExperience]) }
         setNewExperience({
-           title: "",
+            title: "",
             company: "",
-            description:""
+            description: ""
         })
     }
     function removeExperience(exp) {
@@ -76,21 +92,72 @@ function EditProfile() {
         }
 
     }
+    function handleProfileImage(e){
+        let file=e.target.files[0]
+        setBackendProfileImage(file)
+        setFrontendProfileImage(URL.createObjectURL(file))
+    }
+
+    function handleCoverImage(e){
+        let file=e.target.files[0]
+        setBackendCoverImage(file)
+        setFrontendCoverImage(URL.createObjectURL(file))
+    }
+
+    const handleSaveProfile=async()=>{
+        setSaving(true)
+        try{
+            let formdata=new FormData()
+            formdata.append("firstName",firstName)
+            formdata.append("lastName",lastName)
+            formdata.append("userName",userName)
+            formdata.append("headline",headline)
+            formdata.append("location",location)
+            formdata.append("skills",JSON.stringify(skills))
+            formdata.append("education",JSON.stringify(education))
+            formdata.append("experience",JSON.stringify(experience))
+
+            if(backendProfileImage){
+                formdata.append("profileImage",backendProfileImage)
+            }
+             if(backendCoverImage){
+                formdata.append("coverImage",backendCoverImage)
+            }
+
+            let result=await axios.put(serverUrl+"/api/user/updateprofile",formdata,{withCredentials:true})
+            setUserData(result.data)
+            setSaving(false)
+            setEdit(false)
+
+        }catch(error){
+            console.log(error);
+            setSaving(false)
+            
+
+        }
+    }
+
 
 
     return (
         <div className="w-full h-[100vh] fixed top-0 z-[100] flex justify-center items-center">
+
+
+            <input type="file" accept="image/*" hidden ref={profileImage} onChange={handleProfileImage}/>
+            <input type="file" accept="image/*" hidden ref={coverImage} onChange={handleCoverImage}/>
+
+
             <div className="w-full h-full bg-black opacity-[0.5] absolute"></div>
             <div className="w-[90%] max-w-[500px] h-[600px] bg-white  overflow-auto relative z-[200] shadow-lg rounded-lg p-[10px]">
                 <div className="absolute top-[10px] right-[10px] cursor-pointer" onClick={() => setEdit(false)}><RxCross2 className=" w-[25px] h-[25px] text-gray-700 font-semibold cursor-pointer" /></div>
 
-                <div className="w-full h-[150px] bg-gray-500 rounded-lg mt-[40px] overflow-hidden">
-                    <img src="" alt="" className="w-full" />
+                <div className="w-full h-[150px] bg-gray-500 rounded-lg mt-[40px] overflow-hidden" onClick={()=>coverImage.current.click()}>
+                    <img src={frontendCoverImage} alt="" className="w-full" />
                     <FaCamera className="absolute right-[27px] top-[60px] w-[25px] h-[25px] text-gray-800 cursor-pointer" />
                 </div>
 
-                <div className="w-[80px] h-[80px] rounded-full overflow-hidden absolute top-[147px] ml-[10px] ">
-                    <img src={dp} alt="" className="w-full h-full" />
+                <div className="w-[80px] h-[80px] rounded-full overflow-hidden absolute top-[147px] ml-[10px] " onClick={()=>profileImage.current.click()}>
+                    <img src={frontendProfileImage} alt="" className="w-full h-full" />
                 </div>
                 <div className="w-[18px] h-[18px] bg-[#0A66C2] absolute top-[206px] left-[83px] rounded-full flex justify-center items-center cursor pointer">
                     <MdAdd className="text-white" />
@@ -99,18 +166,18 @@ function EditProfile() {
                 <div className="w-full flex flex-col items-center justify-center gap-[10px] mt-[50px]" >
 
 
-                    <input type="text" placeholder='firstName' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={firstName} onChange={(e) => setFirstName(e.target.vakue)}
+                    <input type="text" placeholder='firstName' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={firstName} onChange={(e) => setFirstName(e.target.value)}
                     />
-                    <input type="text" placeholder='lirstName' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={lastName} onChange={(e) => setLastName(e.target.vakue)}
+                    <input type="text" placeholder='lasttName' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={lastName} onChange={(e) => setLastName(e.target.value)}
                     />
-                    <input type="text" placeholder='userName' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={userName} onChange={(e) => setUserName(e.target.vakue)}
+                    <input type="text" placeholder='userName' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={userName} onChange={(e) => setUserName(e.target.value)}
                     />
 
-                    <input type="text" placeholder='headline' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={headline} onChange={(e) => setHeadline(e.target.vakue)}
+                    <input type="text" placeholder='headline' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={headline} onChange={(e) => setHeadline(e.target.value)}
                     />
-                    <input type="text" placeholder='location' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={location} onChange={(e) => setLocation(e.target.vakue)}
+                    <input type="text" placeholder='location' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={location} onChange={(e) => setLocation(e.target.value)}
                     />
-                    <input type="text" placeholder='gender(male/female/other)' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={gender} onChange={(e) => setGender(e.target.vakue)}
+                    <input type="text" placeholder='gender(male/female/other)' className="w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[18px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" value={gender} onChange={(e) => setGender(e.target.value)}
                     />
 
                     <div className="w-full p-[10px] border-2 border-gray-600 flex flex-col gap-[10px] rounded-lg focus:outline-[#0A66C2]">
@@ -158,7 +225,7 @@ function EditProfile() {
 
                     </div>
 
-                     <div className="w-full p-[10px] border-2 border-gray-600 flex flex-col gap-[10px] rounded-lg focus:outline-[#0A66C2]">
+                    <div className="w-full p-[10px] border-2 border-gray-600 flex flex-col gap-[10px] rounded-lg focus:outline-[#0A66C2]">
                         <h1 className="text-[19px] font-semibold">Experience</h1>
                         {experience && <div className=" flex flex-col gap-[10px]">
                             {experience.map((exp, index) => (
@@ -173,23 +240,23 @@ function EditProfile() {
                                     </div>
 
 
-                                    <RxCross2 className=" w-[20px] h-[20px] text-gray-700 font-semibold cursor-pointer" onClick={() => removeExperience (exp)} /> </div>
+                                    <RxCross2 className=" w-[20px] h-[20px] text-gray-700 font-semibold cursor-pointer" onClick={() => removeExperience(exp)} /> </div>
                             ))}
                         </div>
                         }
                         <div action="" className="flex flex-col gap-[10px] items-start">
 
-                            <input type="text" className=" w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[16px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" placeholder="Title" value={newExperience .title} onChange={(e) => setNewExperience ({ ...newExperience , title: e.target.value })} />
-                             <input type="text" className=" w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[16px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" placeholder="Compnay" value={newExperience .company} onChange={(e) => setNewExperience ({ ...newExperience , company: e.target.value })} />
-                              <input type="text" className=" w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[16px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" placeholder="Description" value={newExperience .description} onChange={(e) => setNewExperience ({ ...newExperience , description: e.target.value })} />
-                            
+                            <input type="text" className=" w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[16px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" placeholder="Title" value={newExperience.title} onChange={(e) => setNewExperience({ ...newExperience, title: e.target.value })} />
+                            <input type="text" className=" w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[16px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" placeholder="Compnay" value={newExperience.company} onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })} />
+                            <input type="text" className=" w-[100%] h-[50px] border-2 border-gray-600 text-gray-800 text-[16px] px-[10px] py-[5px] rounded-md focus:outline-[#0A66C2]" placeholder="Description" value={newExperience.description} onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })} />
+
                             <button className="w-[100%] h-[40px] rounded-full border-2 bg-[#0A66C2] text-white" onClick={addExperience}>Add</button>
 
                         </div>
 
                     </div>
 
-                    <button className="w-[100%] h-[50px] mt-[40px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2]" > Save Profile</button>
+                    <button className="w-[100%] h-[50px] mt-[40px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2]"  disable={saving} onClick={()=>handleSaveProfile()}> {saving?"saving...":"Save Profile"} </button>
 
 
 

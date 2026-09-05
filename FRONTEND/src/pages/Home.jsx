@@ -15,21 +15,22 @@ function Home() {
       <Nav />
 
       <div className="w-full lg:w-[25%] min-h-[200px] bg-[white] shadow-lg rounded-lg p-[10px] relative ">
-        <div className="w-[100%] h-[100px] bg-gray-400 rounded overflow-hidde flex items-center justify-center realtive cursor-pointer " onClick={()=>setEdit(true)}>
-          <img src="" alt="" className="w-full" />
+        <div className="w-[100%] h-[100px] bg-gray-400 rounded overflow-hidden flex items-center justify-center realtive cursor-pointer " onClick={()=>setEdit(true)}>
+          <img src={userData.coverImage||""} alt="" className="w-full" />
           <FaCamera className="absolute right-[20px] top-[20px] w-[25px] h-[25px] text-gray-800 cursor-pointer"/>
           
         </div>
-        <div className="w-[70px] h-[70px] rounded-full overflow-hidden items-center justify-center absolute top-[65px] left-[35px] cursor pointer" onClick={()=>setEdit(true)}>
-          <img src={dp} alt="" className="h-full" />
+        <div className="w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center absolute top-[65px] left-[35px] cursor pointer" onClick={()=>setEdit(true)}>
+          <img src={userData.profileImage||dp} alt="" className="h-full" />
         </div>
         <div className="w-[20px] h-[20px] bg-[#0A66C2] absolute top-[110px] left-[87px] rounded-full flex justify-center items-center cursor pointer">
           <MdAdd className="text-white"/>
         </div>
 
-        <div className="mt-[30px] pl-[20px] text-[19px] font-semibold text-gray-700">
-          <div>{`${userData.firstName} ${userData.lastName}`}</div>
-          <div className="text-[19px] font-semibold text-gray-700">{userData.headline||""}</div>
+        <div className="mt-[30px] pl-[20px] font-semibold text-gray-700">
+          <div className="text-[22px]">{`${userData.firstName} ${userData.lastName}`}</div>
+          <div className="text-[18px] font-semibold text-gray-600">{userData.headline||""}</div>
+           
           
           <div className="text-[16px] text-gray-500">{`${userData.location}`}</div>
 
