@@ -9,9 +9,9 @@ import { useState } from "react"
 import { useRef } from "react"
 import { authDataContext } from "../assets/context/AuthDataContext";
 function EditProfile() {
-    
-    let {serverUrl}=useContext(authDataContext)
-    let { setEdit, userData, setUserData} = useContext(userDataContext)
+
+    let { serverUrl } = useContext(authDataContext)
+    let { setEdit, userData, setUserData } = useContext(userDataContext)
     let [firstName, setFirstName] = useState(userData.firstName || "")
     let [lastName, setLastName] = useState(userData.lastName || "")
     let [userName, setUserName] = useState(userData.userName || "")
@@ -33,13 +33,13 @@ function EditProfile() {
         description: ""
     })
 
-    let [frontendProfileImage,setFrontendProfileImage]=useState(userData.profileImage||dp)
-    let [backendProfileImage,setBackendProfileImage]=useState(null)
-    let [frontendCoverImage,setFrontendCoverImage]=useState(userData.coverImage||null)
-    let [backendCoverImage,setBackendCoverImage]=useState(null)
-    let [saving,setSaving]=useState(false)
-    
-    
+    let [frontendProfileImage, setFrontendProfileImage] = useState(userData.profileImage || dp)
+    let [backendProfileImage, setBackendProfileImage] = useState(null)
+    let [frontendCoverImage, setFrontendCoverImage] = useState(userData.coverImage || null)
+    let [backendCoverImage, setBackendCoverImage] = useState(null)
+    let [saving, setSaving] = useState(false)
+
+
     const profileImage = useRef()
     const coverImage = useRef()
 
@@ -92,47 +92,47 @@ function EditProfile() {
         }
 
     }
-    function handleProfileImage(e){
-        let file=e.target.files[0]
+    function handleProfileImage(e) {
+        let file = e.target.files[0]
         setBackendProfileImage(file)
         setFrontendProfileImage(URL.createObjectURL(file))
     }
 
-    function handleCoverImage(e){
-        let file=e.target.files[0]
+    function handleCoverImage(e) {
+        let file = e.target.files[0]
         setBackendCoverImage(file)
         setFrontendCoverImage(URL.createObjectURL(file))
     }
 
-    const handleSaveProfile=async()=>{
+    const handleSaveProfile = async () => {
         setSaving(true)
-        try{
-            let formdata=new FormData()
-            formdata.append("firstName",firstName)
-            formdata.append("lastName",lastName)
-            formdata.append("userName",userName)
-            formdata.append("headline",headline)
-            formdata.append("location",location)
-            formdata.append("skills",JSON.stringify(skills))
-            formdata.append("education",JSON.stringify(education))
-            formdata.append("experience",JSON.stringify(experience))
+        try {
+            let formdata = new FormData()
+            formdata.append("firstName", firstName)
+            formdata.append("lastName", lastName)
+            formdata.append("userName", userName)
+            formdata.append("headline", headline)
+            formdata.append("location", location)
+            formdata.append("skills", JSON.stringify(skills))
+            formdata.append("education", JSON.stringify(education))
+            formdata.append("experience", JSON.stringify(experience))
 
-            if(backendProfileImage){
-                formdata.append("profileImage",backendProfileImage)
+            if (backendProfileImage) {
+                formdata.append("profileImage", backendProfileImage)
             }
-             if(backendCoverImage){
-                formdata.append("coverImage",backendCoverImage)
+            if (backendCoverImage) {
+                formdata.append("coverImage", backendCoverImage)
             }
 
-            let result=await axios.put(serverUrl+"/api/user/updateprofile",formdata,{withCredentials:true})
+            let result = await axios.put(serverUrl + "/api/user/updateprofile", formdata, { withCredentials: true })
             setUserData(result.data)
             setSaving(false)
             setEdit(false)
 
-        }catch(error){
+        } catch (error) {
             console.log(error);
             setSaving(false)
-            
+
 
         }
     }
@@ -140,23 +140,23 @@ function EditProfile() {
 
 
     return (
-        <div className="w-full h-[100vh] fixed top-0 z-[100] flex justify-center items-center">
+        <div className="w-full h-screen fixed inset-0 z-[9999] flex justify-center items-center">
 
 
-            <input type="file" accept="image/*" hidden ref={profileImage} onChange={handleProfileImage}/>
-            <input type="file" accept="image/*" hidden ref={coverImage} onChange={handleCoverImage}/>
+            <input type="file" accept="image/*" hidden ref={profileImage} onChange={handleProfileImage} />
+            <input type="file" accept="image/*" hidden ref={coverImage} onChange={handleCoverImage} />
 
 
-            <div className="w-full h-full bg-black opacity-[0.5] absolute"></div>
+            <div className="w-full h-full bg-black opacity-[0.5] absolute top-0 left-0"></div>
             <div className="w-[90%] max-w-[500px] h-[600px] bg-white  overflow-auto relative z-[200] shadow-lg rounded-lg p-[10px]">
                 <div className="absolute top-[10px] right-[10px] cursor-pointer" onClick={() => setEdit(false)}><RxCross2 className=" w-[25px] h-[25px] text-gray-700 font-semibold cursor-pointer" /></div>
 
-                <div className="w-full h-[150px] bg-gray-500 rounded-lg mt-[40px] overflow-hidden" onClick={()=>coverImage.current.click()}>
+                <div className="w-full h-[150px] bg-gray-500 rounded-lg mt-[40px] overflow-hidden" onClick={() => coverImage.current.click()}>
                     <img src={frontendCoverImage} alt="" className="w-full" />
                     <FaCamera className="absolute right-[27px] top-[60px] w-[25px] h-[25px] text-gray-800 cursor-pointer" />
                 </div>
 
-                <div className="w-[80px] h-[80px] rounded-full overflow-hidden absolute top-[147px] ml-[10px] " onClick={()=>profileImage.current.click()}>
+                <div className="w-[80px] h-[80px] rounded-full overflow-hidden absolute top-[147px] ml-[10px] " onClick={() => profileImage.current.click()}>
                     <img src={frontendProfileImage} alt="" className="w-full h-full" />
                 </div>
                 <div className="w-[18px] h-[18px] bg-[#0A66C2] absolute top-[206px] left-[83px] rounded-full flex justify-center items-center cursor pointer">
@@ -256,7 +256,7 @@ function EditProfile() {
 
                     </div>
 
-                    <button className="w-[100%] h-[50px] mt-[40px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2]"  disable={saving} onClick={()=>handleSaveProfile()}> {saving?"saving...":"Save Profile"} </button>
+                    <button className="w-[100%] h-[50px] mt-[40px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2]" disable={saving} onClick={() => handleSaveProfile()}> {saving ? "saving..." : "Save Profile"} </button>
 
 
 

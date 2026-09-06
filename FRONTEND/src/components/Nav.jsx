@@ -33,7 +33,7 @@ function Nav() {
         }
     }
     return (
-        <div className="w-full h-[80px] bg-white fixed top-0 shadow-lg flex justify-between md:justify-around items-center px-[10px]">
+       <div className="w-full h-[80px] bg-white fixed top-0 z-[999] shadow-lg flex justify-between md:justify-around items-center px-[10px]">
             <div className="flex justify-center items-center gap-[10px]">
 
                 <div onClick={() => {
@@ -66,9 +66,6 @@ function Nav() {
                     <button className="w-[100%] h-[40px] rounded-full border-2 border-[#ec4545] text-[#ec4545]" onClick={handleSignOut}>Sign Out</button>
 
                 </div>}
-
-
-
 
                 <div className="lg:flex flex-col items-center justify-center text-gray-600 hidden">
                     <IoHome className="w-[23px] h-[23px] text-gray-600" />
