@@ -6,6 +6,7 @@ function UserContext({children}) {
 let [userData,setUserData]=useState([null])
 let {serverUrl}=useContext(authDataContext)
 let[edit,setEdit]=useState(false)
+let[postData,setPostData]=useState([])
 
 
 useEffect(() => {
@@ -24,10 +25,30 @@ useEffect(() => {
         }
     }
 
+    const getPost= async () => {
+        try {
+            let result = await axios.get(
+                serverUrl + "/api/post/getpost",
+                { withCredentials: true }
+            )
+
+            
+            console.log(result)
+            setPostData(result.data)
+
+        } catch (error) {
+            console.log(error)
+            
+        }
+    }
+
+    
+
     getCurrentUser()
+    getPost()
 }, [serverUrl])
     const value={
-        userData,setUserData,edit,setEdit
+        userData,setUserData,edit,setEdit,postData,setPostData
     }
   return (
     <div>

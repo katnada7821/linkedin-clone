@@ -1,4 +1,5 @@
 import Nav from "../components/Nav"
+import Post from "../components/Post"
 import { useContext, useState } from "react"
 import dp from "../assets/dp.png"
 import { useRef } from "react"
@@ -12,7 +13,7 @@ import EditProfile from "../components/EditProfile";
 import { authDataContext } from "../assets/context/AuthDataContext";
 import { FaRegImages } from "react-icons/fa6";
 function Home() {
-  let { userData, edit, setEdit } = useContext(userDataContext)
+  let { userData, edit, setEdit,postData} = useContext(userDataContext)
   let [frontendImage, setFrontendImage] = useState("")
   let [backendImage, setBackendImage] = useState("")
   let [description, setDescription] = useState("")
@@ -130,6 +131,11 @@ function Home() {
           <button className="w-[80%] h-[60px] border-2 rounded-full border-gray-500 flex items-center justify-center px-[20px] hover:bg-gray-200" onClick={() => setUploadPost(true)}>Start a post </button>
 
         </div>
+        {postData.map((post,index)=>(
+          <Post key={index} id={post._id} description={post.description} author={post.author} image={post.image} like={post.like} comment={post.comment} createdAt={post.createdAt} />
+
+        ))}
+        
 
 
       </div>

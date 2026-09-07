@@ -1,10 +1,9 @@
 import mongoose from "mongoose"
 
 const postSchema = new mongoose.Schema({
-
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "user",
         required: true
     },
 
@@ -24,7 +23,7 @@ const postSchema = new mongoose.Schema({
             },
             user: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
+                ref: "user"
             }
         }
     ],
@@ -32,10 +31,9 @@ const postSchema = new mongoose.Schema({
     like: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "user"
         }
     ]
-
 }, { timestamps: true })
 
 const Post = mongoose.model("post", postSchema)
