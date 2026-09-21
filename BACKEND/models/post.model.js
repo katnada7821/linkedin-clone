@@ -16,7 +16,7 @@ const postSchema = new mongoose.Schema({
         type: String
     },
 
-    Comment: [
+    comment: [
         {
             content: {
                 type: String
