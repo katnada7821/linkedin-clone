@@ -8,6 +8,10 @@ import { MdOutlineInsertComment } from "react-icons/md";
 import axios from "axios";
 import { authDataContext } from "../assets/context/AuthDataContext";
 import { userDataContext } from "../assets/context/UserDataContext";
+import { io } from "Socket.io-client"
+import { useEffect } from "react";
+
+let socket=io("http://localhost:8000")
 
 function Post({
     id,
@@ -61,6 +65,29 @@ function Post({
             console.log(error);
         }
     };
+
+    useEffect(()=>{
+        socket.on("likeUpdated",({postId,likes})=>{
+            if(postId==id){
+                setLikes(likes)
+            }
+        })
+        return ()=>{
+            socket.off("likeUpdated")
+        }
+    },[id])
+
+    useEffect(()=>{
+        socket.on("commentAdded",({postId,comm})=>{
+            if(postId==id){
+                setComments(comm)
+            }
+        })
+        return ()=>{
+            socket.off("commentAdded")
+        }
+    },[id])
+
 
 
 
@@ -157,7 +184,7 @@ function Post({
                     <div className="flex items-center justify-center gap-[5px] text-[#0A66C2] cursor-pointer"onClick={()=>setShowComment(prev=>!prev)}>
 
                         <span>
-                            {comment.length} Comments
+                            {comments.length} Comments
                         </span>
 
                     </div>
