@@ -59,7 +59,7 @@ function Nav() {
                     <div className="text-[19px] font-semibold"> {`${userData.firstName} ${userData.lastName}`}</div>
                     <button className="w-[100%] h-[40px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2]">View Profile</button>
                     <div className="w-full h-[1px] bg-gray-700"></div>
-                    <div className="flex w-full items-center justify-start text-gray-600 gap-[10px]">
+                    <div className="flex w-full items-center justify-start text-gray-600 gap-[10px]"  onClick={()=>navigate("/network")}>
                         <HiUsers className="w-[23px] h-[23px] text-gray-600" />
                         <div  > My Networks</div>
                     </div>
@@ -72,9 +72,9 @@ function Nav() {
                     <div> Home</div>
                 </div>
 
-                <div className="md:flex flex-col items-center justify-center text-gray-600 hidden">
+                <div className="md:flex flex-col items-center justify-center text-gray-600 hidden cursor-pointer" onClick={()=>navigate("/network")}>
                     <HiUsers className="w-[23px] h-[23px] text-gray-600" />
-                    <div  > Networks</div>
+                    <div  > My Networks</div>
                 </div>
 
                 <div className="flex flex-col items-center justify-center text-gray-600">

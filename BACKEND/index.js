@@ -36,13 +36,14 @@ export const userSocketMap=new Map()
 
 io.on("connection", (socket) => {
 
-    console.log("user connected", socket.id);
+   
     socket.on("register",(userId)=>{
         userSocketMap.set(userId,socket.id)
+       
     })
 
     socket.on("disconnect", () => {
-        console.log("user disconnected", socket.id);
+        
     });
 
 });

@@ -1,5 +1,5 @@
 import User from "../models/user.model.js"
-import { Connection } from "../models/connection.model.js"
+import Connection from "../models/connection.model.js"
 import {io,userSocketMap} from "../index.js"
 
 export const sendConnection=async(req,res)=>{
@@ -199,7 +199,7 @@ export const getConnectionRequests = async (req, res) => {
             receiver: userId,
             status: "pending"
         }).populate(
-            "Sender",
+            "sender",
             "firstName lastName email userName profileImage headline"
         );
 

@@ -10,6 +10,7 @@ import { authDataContext } from "../assets/context/AuthDataContext";
 import { userDataContext } from "../assets/context/UserDataContext";
 import { io } from "Socket.io-client"
 import { useEffect } from "react";
+import ConnectionButton from "./ConnectionButton";
 
 let socket=io("http://localhost:8000")
 
@@ -130,7 +131,7 @@ function Post({
 
 
                 <div>
-                    {/* button */}
+                   {userData._id!=author._id&& <ConnectionButton userId={author._id}/>}
                 </div>
 
             </div>
