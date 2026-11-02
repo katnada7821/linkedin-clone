@@ -57,7 +57,7 @@ function Nav() {
                         <img src={userData.profileImage||dp} alt="" className="w-full h-full" />
                     </div>
                     <div className="text-[19px] font-semibold"> {`${userData.firstName} ${userData.lastName}`}</div>
-                    <button className="w-[100%] h-[40px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2]">View Profile</button>
+                    <button className="w-[100%] h-[40px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2]" onClick={()=>navigate("/profile")}>View Profile</button>
                     <div className="w-full h-[1px] bg-gray-700"></div>
                     <div className="flex w-full items-center justify-start text-gray-600 gap-[10px]"  onClick={()=>navigate("/network")}>
                         <HiUsers className="w-[23px] h-[23px] text-gray-600" />
