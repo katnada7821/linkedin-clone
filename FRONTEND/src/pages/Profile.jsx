@@ -9,15 +9,16 @@ import { FaPenToSquare } from "react-icons/fa6";
 import axios from "axios"
 import { authDataContext } from "../assets/context/AuthDataContext";
 import EditProfile from "../components/EditProfile";
+import ConnectionButton from "../components/ConnectionButton";
 
 
 function Profile() {
 
-  let { profileData, edit, setEdit,postData} = useContext(userDataContext)
+  let { userData,profileData, edit, setEdit,postData} = useContext(userDataContext)
 
   let { serverUrl } = useContext(authDataContext)
 
-  let [userConnection, setUserConnection] = useState([])
+  let [ setUserConnection] = useState([])
   useEffect(() => {
 
     const handleGetUserConnection = async () => {
@@ -60,10 +61,13 @@ const profilePost = postData.filter(
 
 
             <div className="text-[16px] text-gray-500">{`${profileData.location}`}</div>
-            <div className="text-[16px] text-gray-500">{`${userConnection.length} connections`}</div>
+            <div className="text-[16px] text-gray-500">{`${profileData.connection.length} connections`}</div>
+
 
           </div>
-          <button className="min-w-[150px] h-[40px] my-[20px] ml-[10px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2] flex items-center justify-center gap-[10px]" onClick={() => setEdit(true)}>Edit Profile <FaPenToSquare /></button>
+          {profileData._id==userData._id&& <button className="min-w-[150px] h-[40px] my-[20px] ml-[10px] rounded-full border-2 border-[#0A66C2] text-[#0A66C2] flex items-center justify-center gap-[10px]" onClick={() => setEdit(true)}>Edit Profile <FaPenToSquare /></button> }
+          {profileData._id!=userData._id&& <div className="ml-[20px] mt-[20px]"><ConnectionButton userId={profileData._id} /></div>}
+          
         </div>
         <div className="w-full h-[100px] flex-items-center p-[20px] text-[22px] text-gray-600 font-semibold bg-white shadow-lg rounded-lg">{`Post(${profilePost.length})`}</div>
         {profilePost.map((post,index) => (
@@ -86,13 +90,14 @@ const profilePost = postData.filter(
                 </div>
             ))}
         </div>
-
-        <button
+        {profileData._id==userData._id&& <button
             className='w-fit min-w-[150px] h-[40px] px-5 rounded-full border-2 border-[#0A66C2] text-[#0A66C2] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all'
             onClick={() => setEdit(true)}
         >
             Add Skills
-        </button>
+        </button>}
+
+        
 
     </div>
 )}
@@ -114,12 +119,14 @@ const profilePost = postData.filter(
             ))}
         </div>
 
-        <button
+        {profileData._id==userData._id&& <button
             className='w-fit min-w-[150px] h-[40px] px-5 rounded-full border-2 border-[#0A66C2] text-[#0A66C2] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all'
             onClick={() => setEdit(true)}
         >
             Add Education
-        </button>
+        </button>}
+
+        
 
     </div>
 )}
@@ -140,13 +147,14 @@ const profilePost = postData.filter(
                 
             ))}
         </div>
-
-        <button
+        {profileData._id==userData._id&& <button
             className='w-fit min-w-[150px] h-[40px] px-5 rounded-full border-2 border-[#0A66C2] text-[#0A66C2] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all'
             onClick={() => setEdit(true)}
         >
             Add Experience
-        </button>
+        </button>}
+
+        
 
     </div>
 )}

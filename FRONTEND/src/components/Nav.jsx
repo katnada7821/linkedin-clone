@@ -4,11 +4,12 @@ import { IoHome } from "react-icons/io5";
 import { HiUsers } from "react-icons/hi2";
 import { IoMdNotifications } from "react-icons/io";
 import dp from "../assets/dp.png"
-import { useState, useContext } from "react"
+import { useCallback, useEffect, useState, useContext } from "react"
 import { userDataContext } from "../assets/context/UserDataContext.jsx"
 import { authDataContext } from "../assets/context/AuthDataContext.jsx";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+
 
 function Nav() {
     let [activeSearch, setActivesearch] = useState(false)
@@ -16,6 +17,8 @@ function Nav() {
     let [showPopup, setShowPopup] = useState(false)
     let navigate = useNavigate()
     let { serverUrl } = useContext(authDataContext)
+    let [searchInput, setSearchInput] = useState("")
+    let [ searchData, setSearchData] = useState([])
     const handleSignOut = async () => {
         try {
             let result = await axios.post(
@@ -32,6 +35,26 @@ function Nav() {
             console.log(error)
         }
     }
+    const handleSearch = useCallback(async (e) => {
+    e?.preventDefault();
+
+    try {
+        let result = await axios.get(
+            `${serverUrl}/api/user/search?query=${searchInput}`,
+            { withCredentials: true }
+        );
+        setSearchData(result.data);
+        console.log(result.data);
+    } catch (error) {
+        setSearchData([]);
+        console.log(error);
+    }
+}, [serverUrl, searchInput]);
+
+useEffect(() => {
+    handleSearch();
+}, [handleSearch, searchInput]);
+
     return (
        <div className="w-full h-[80px] bg-white fixed top-0 z-[999] shadow-lg flex justify-between md:justify-around items-center px-[10px]">
             <div className="flex justify-center items-center gap-[10px]">
@@ -43,9 +66,21 @@ function Nav() {
                 </div>
                 {!activeSearch && <div><IoSearchSharp className='w-[23px] h-[23px] text-gray-600 lg:hidden' onClick={() => setActivesearch(true)} /></div>
                 }
+                {searchData.length > 0 && <div className="absolute top-[90px] min-h-[50px] left-[0px] lg:left-[250px] shadow-lg w-[100%] lg:w-[500px] bg-white flex flex-col gap-[20px]">
+                    {searchData.map((sea) => (
+                        <div key={sea._id} className="flex items-center gap-[10px] px-[10px] py-[5px] hover:bg-gray-200 cursor-pointer" onClick={() => handleGetProfile(sea.userName)}>
+                            <img src={sea.profileImage || dp} alt="" className="w-[40px] h-[40px] rounded-full" />
+                            <div>
+                                <div className="font-semibold">{`${sea.firstName} ${sea.lastName}`}</div>
+                                <div className="text-sm text-gray-600">{sea.headline}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div> }
+                
                 <form className={` w-[190px] lg:w-[350px] h-[40px] bg-[#f0efe7] lg:flex items-center gap-[10px] px-[10px] py-[5px] rounded-md ${!activeSearch ? "hidden" : "flex"}`}>
                     <div><IoSearchSharp className="w-[23px] h-[23px] text-gray-600" /></div>
-                    <input type="text" className="w-[80%] h-full bg-transparent outline-none border-0" placeholder="search users..." />
+                    <input type="text" className="w-[80%] h-full bg-transparent outline-none border-0" placeholder="search users..." onChange={(e) => setSearchInput(e.target.value)} value={searchInput} />
                 </form>
             </div>
 

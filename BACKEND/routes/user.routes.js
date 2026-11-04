@@ -1,5 +1,5 @@
 import express from "express"
-import { getCurrentUser, updateProfile,getprofile} from "../controllers/user.controllers.js"
+import {search, getCurrentUser, updateProfile,getprofile} from "../controllers/user.controllers.js"
 import upload from "../middlewares/multer.js"
 import isAuth from "../middlewares/isAuth.js"
 let userRouter=express.Router()
@@ -9,6 +9,8 @@ userRouter.put("/updateprofile",isAuth,upload.fields([
     {name:"coverImage",maxCount:1}
 ]),updateProfile)
 userRouter.get("/profile/:userName",getprofile)
+userRouter.get("/search",isAuth,search)
+
 
 
 export default userRouter
