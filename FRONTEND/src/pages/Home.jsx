@@ -1,6 +1,6 @@
 import Nav from "../components/Nav"
 import Post from "../components/Post"
-import { useContext, useState } from "react"
+import { useEffect, useContext, useState } from "react"
 import dp from "../assets/dp.png"
 import { useRef } from "react"
 import { FaCamera } from "react-icons/fa";
@@ -13,7 +13,7 @@ import EditProfile from "../components/EditProfile";
 import { authDataContext } from "../assets/context/AuthDataContext";
 import { FaRegImages } from "react-icons/fa6";
 function Home() {
-  let { userData, edit, setEdit,postData} = useContext(userDataContext)
+  let { userData, edit, setEdit,postData,handleGetProfile } = useContext(userDataContext)
   let [frontendImage, setFrontendImage] = useState("")
   let [backendImage, setBackendImage] = useState("")
   let [description, setDescription] = useState("")
@@ -21,6 +21,7 @@ function Home() {
   let { serverUrl } = useContext(authDataContext)
   let image = useRef()
   let[posting,setPosting]=useState(false)
+  let [suggestedUsers, setSuggestedUsers] = useState([])
 
   function handleImage(e) {
     let file = e.target.files[0]
@@ -55,6 +56,19 @@ function Home() {
 
     }
   }
+  const handleSuggestedUsers=async()=>{
+    try{
+      let result=await axios.get(`${serverUrl}/api/user/suggestedusers`,{withCredentials:true})
+      setSuggestedUsers(result.data)
+      console.log(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=>{
+    handleSuggestedUsers()
+  },[])
 
 
   return (
@@ -136,12 +150,51 @@ function Home() {
 
         ))}
         
+        
+        
 
 
       </div>
-      <div className="w-full lg:w-[25%] min-h-[200px] bg-[white] shadow-lg rounded-lg p-[10px]">
+      <div className="w-full lg:w-[25%] min-h-[200px] bg-white shadow-lg rounded-lg p-[10px]">
 
+  <div className="text-[22px] font-semibold text-gray-600 mb-2">
+    Suggested Users
+  </div>
+
+  {suggestedUsers.length > 0 ? (
+    suggestedUsers.map((su) => (
+      <div
+        key={su._id}
+        onClick={() => handleGetProfile(su.userName)}
+        className="w-full min-h-[100px] flex justify-start items-center gap-[10px] p-[10px] border-b-2 border-gray-300 cursor-pointer hover:bg-gray-100 hover:shadow-md transition-all duration-200 rounded-lg"
+      >
+        <div className="w-[60px] h-[60px] rounded-full overflow-hidden shrink-0">
+          <img
+            src={su.profileImage || dp}
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        <div className="flex flex-col flex-1">
+          <div className="text-[16px] font-semibold text-gray-700">
+            {su.firstName} {su.lastName}
+          </div>
+
+          <div className="text-[13px] text-gray-500">
+            {su.headline || "No headline"}
+          </div>
+        </div>
       </div>
+    ))
+  ) : (
+    <div className="w-full min-h-[130px] flex justify-center items-center text-gray-500 text-[15px]">
+      No suggested users available.
+    </div>
+  )}
+
+</div>
+      
     </div>
   )
 }
