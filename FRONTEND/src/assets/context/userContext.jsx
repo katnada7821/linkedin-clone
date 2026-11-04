@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import { authDataContext } from "./AuthDataContext";
 import { userDataContext } from "./UserDataContext";
 import axios from "axios";
@@ -8,6 +9,8 @@ function UserContext({ children }) {
     let [userData, setUserData] = useState(null);
     let [edit, setEdit] = useState(false);
     let [postData, setPostData] = useState([]);
+    let[profileData,setProfileData]=useState(null)
+    let navigate = useNavigate(); 
 
     let { serverUrl } = useContext(authDataContext);
 
@@ -31,7 +34,23 @@ function UserContext({ children }) {
 
         }
     };
+    const handleGetProfile = async (userName) => {
+  
+  try {
+    let result = await axios.get(
+      serverUrl + `/api/user/profile/${userName}`,
+      { withCredentials: true }
+    );
+   
 
+    setProfileData(result.data);
+    
+navigate("/profile");
+    
+  } catch (error) {
+    console.log("GET PROFILE ERROR:", error);
+  }
+};
 
     // Get current user
     useEffect(() => {
@@ -93,7 +112,10 @@ function UserContext({ children }) {
         setEdit,
         postData,
         setPostData,
-        getPost
+        getPost,
+        profileData,
+        setProfileData,
+        handleGetProfile
     };
 
 

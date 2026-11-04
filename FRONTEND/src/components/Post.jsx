@@ -32,7 +32,7 @@ function Post({
 
     let { serverUrl } = useContext(authDataContext);
 
-    let { userData} = useContext(userDataContext);
+    let { userData,handleGetProfile } = useContext(userDataContext);
 
 
     const handleLike = async () => {
@@ -98,7 +98,7 @@ function Post({
 
             <div className="flex justify-between items-center">
 
-                <div className="flex justify-center items-start gap-[10px]">
+                <div className="flex justify-center items-start gap-[10px]" onClick={()=> handleGetProfile(author.userName)}>
 
                     <div className="w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center cursor-pointer">
 

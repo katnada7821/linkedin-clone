@@ -6,11 +6,15 @@ import { RxCrossCircled } from "react-icons/rx";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { authDataContext } from "../assets/context/AuthDataContext"
 import axios from 'axios'
+import { userDataContext } from "../assets/context/UserDataContext"
+
 
 
 function Network() {
   let { serverUrl } = useContext(authDataContext)
   let [connections, setConnections] = useState([])
+ 
+let { handleGetProfile } = useContext(userDataContext)   // yeh nayi line
 
   useEffect(() => {
     const getRequests = async () => {
@@ -78,7 +82,7 @@ setConnections((prevConnections) =>
         key={connection._id}
         className="w-full min-h-[100px] flex justify-between items-center"
       >
-        <div className="flex justify-center items-center gap-[10px]">
+        <div className="flex justify-center items-center gap-[10px]" onClick={() => handleGetProfile(connection.sender.userName)}>
           <div className="w-[50px] h-[50px] rounded-full overflow-hidden cursor-pointer">
             <img
               src={connection.sender.profileImage || dp}
