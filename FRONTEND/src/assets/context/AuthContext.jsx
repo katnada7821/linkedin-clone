@@ -1,7 +1,7 @@
 import { authDataContext } from "./AuthDataContext"
 
 function AuthContext({ children }) {
-    const serverUrl="http://localhost:8000"
+    const serverUrl="https://linkedin-backend-u0lv.onrender.com"
     let value = {
         serverUrl
 
