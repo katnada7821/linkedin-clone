@@ -10,47 +10,46 @@ import connectionRouter from "./routes/connection.routes.js"
 import notificationRouter from "./routes/notification.routes.js"
 import http from "http"
 import { Server } from "socket.io"
-dotenv.config()
-let app=express()
-let server=http.createServer(app)
-export const io=new Server(server,{
-    cors:({
-    origin:"https://linkedin-frontend-50d3.onrender.com",
-    credentials:true
-})
 
-})
-app.use(express.json())
-app.use(cookieParser())
-app.use(cors({
-    origin:"https://linkedin-frontend-50d3.onrender.com",
-    credentials:true
-}))
-let port=process.env.PORT || 5000
-app.use("/api/auth",authRouter)
-app.use("/api/user",userRouter)
-app.use("/api/post",postRouter)
-app.use("/api/connection",connectionRouter)
-app.use("/api/notification",notificationRouter)
+dotenv.config();
 
-export const userSocketMap=new Map()
+const app = express();
+const server = http.createServer(app);
 
+const corsOptions = {
+    origin: "https://linkedin-frontend-50d3.onrender.com",
+    credentials: true
+};
 
-io.on("connection", (socket) => {
-
-   
-    socket.on("register",(userId)=>{
-        userSocketMap.set(userId,socket.id)
-       
-    })
-
-    socket.on("disconnect", () => {
-        
-    });
-
+export const io = new Server(server, {
+    cors: corsOptions
 });
 
-server.listen(port,()=>{
-    connectDb()
+// Middleware
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
+
+// Routes
+let port = process.env.PORT || 5000;
+
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
+app.use("/api/connection", connectionRouter);
+app.use("/api/notification", notificationRouter);
+
+export const userSocketMap = new Map();
+
+io.on("connection", (socket) => {
+    socket.on("register", (userId) => {
+        userSocketMap.set(userId, socket.id);
+    });
+
+    socket.on("disconnect", () => {});
+});
+
+server.listen(port, () => {
+    connectDb();
     console.log("server started");
-})
+});
