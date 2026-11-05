@@ -12,7 +12,7 @@ import { io } from "Socket.io-client"
 import { useEffect } from "react";
 import ConnectionButton from "./ConnectionButton";
 
-let socket=io("http://localhost:8000")
+let socket=io("https://linkedin-backend-u0lv.onrender.com")
 
 function Post({
     id,
