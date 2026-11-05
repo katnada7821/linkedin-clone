@@ -8,7 +8,7 @@ import { MdOutlineInsertComment } from "react-icons/md";
 import axios from "axios";
 import { authDataContext } from "../assets/context/AuthDataContext";
 import { userDataContext } from "../assets/context/UserDataContext";
-import { io } from "Socket.io-client"
+import { io } from "socket.io-client";
 import { useEffect } from "react";
 import ConnectionButton from "./ConnectionButton";
 
