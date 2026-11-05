@@ -4,7 +4,7 @@ import { IoHome } from "react-icons/io5";
 import { HiUsers } from "react-icons/hi2";
 import { IoMdNotifications } from "react-icons/io";
 import dp from "../assets/dp.png"
-import { useCallback, useEffect, useState, useContext } from "react"
+import {  useState, useContext } from "react"
 import { userDataContext } from "../assets/context/UserDataContext.jsx"
 import { authDataContext } from "../assets/context/AuthDataContext.jsx";
 import axios from "axios"
@@ -35,25 +35,32 @@ function Nav() {
             console.log(error)
         }
     }
-    const handleSearch = useCallback(async (e) => {
-    e?.preventDefault();
+    const handleSearch = async (value) => {
+    if (!value.trim()) {
+        setSearchData([]);
+        return;
+    }
 
     try {
         let result = await axios.get(
-            `${serverUrl}/api/user/search?query=${searchInput}`,
+            `${serverUrl}/api/user/search?query=${value}`,
             { withCredentials: true }
         );
+
         setSearchData(result.data);
-        console.log(result.data);
     } catch (error) {
-        setSearchData([]);
         console.log(error);
     }
-}, [serverUrl, searchInput]);
+};
 
-useEffect(() => {
-    handleSearch();
-}, [handleSearch, searchInput]);
+<input
+    value={searchInput}
+    onChange={(e) => {
+        const value = e.target.value;
+        setSearchInput(value);
+        handleSearch(value);
+    }}
+/>
 
     return (
        <div className="w-full h-[80px] bg-white fixed top-0 z-[999] shadow-lg flex justify-between md:justify-around items-center px-[10px]">
@@ -66,7 +73,7 @@ useEffect(() => {
                 </div>
                 {!activeSearch && <div><IoSearchSharp className='w-[23px] h-[23px] text-gray-600 lg:hidden' onClick={() => setActivesearch(true)} /></div>
                 }
-                {searchData.length > 0 && <div className="absolute top-[90px] min-h-[50px] left-[0px] lg:left-[250px] shadow-lg w-[100%] lg:w-[500px] bg-white flex flex-col gap-[20px]">
+                {searchData.length > 0 && <div className="absolute top-[90px] min-h-[50px] left-[0px] lg:left-[250px] shadow-lg w-[100%] lg:w-[500px] bg-white flex flex-col gap-[20px] overflow-auto">
                     {searchData.map((sea) => (
                         <div key={sea._id} className="flex items-center gap-[10px] px-[10px] py-[5px] hover:bg-gray-200 cursor-pointer" onClick={() => handleGetProfile(sea.userName)}>
                             <img src={sea.profileImage || dp} alt="" className="w-[40px] h-[40px] rounded-full" />
@@ -87,7 +94,7 @@ useEffect(() => {
 
             <div className="flex justify-center items-center gap-[20px]">
 
-                {showPopup && <div className="w-[300px] min-h-[300px] bg-white shadow-lg absolute top-[90px] rounded-lg flex flex-col items-center p-[20px] gap-[20px]">
+                {showPopup && <div className="w-[300px] min-h-[300px] bg-white shadow-lg absolute top-[90px] rounded-lg flex flex-col items-center p-[20px] gap-[20px] right-[20px] lg:right-[90px]">
                     <div className="w-[70px] h-[70px] rounded-full overflow-hidden">
                         <img src={userData.profileImage||dp} alt="" className="w-full h-full" />
                     </div>
@@ -107,7 +114,7 @@ useEffect(() => {
 
                 </div>}
 
-                <div className="lg:flex flex-col items-center justify-center text-gray-600 hidden">
+                <div className="lg:flex flex-col items-center justify-center text-gray-600 hidden" onClick={() => navigate("/")}>
                     <IoHome className="w-[23px] h-[23px] text-gray-600" />
                     <div> Home</div>
                 </div>
@@ -118,7 +125,7 @@ useEffect(() => {
                 </div>
 
                 <div className="flex flex-col items-center justify-center text-gray-600">
-                    <IoMdNotifications className="w-[23px] h-[23px] text-gray-600" />
+                    <IoMdNotifications className="w-[23px] h-[23px] text-gray-600 cursor-pointer" onClick={() => navigate("/notification")} />
                     <div className="hidden md:block">Notifications</div>
                 </div>
 

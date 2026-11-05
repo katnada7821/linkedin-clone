@@ -56,19 +56,33 @@ function Home() {
 
     }
   }
-  const handleSuggestedUsers=async()=>{
-    try{
-      let result=await axios.get(`${serverUrl}/api/user/suggestedusers`,{withCredentials:true})
-      setSuggestedUsers(result.data)
-      console.log(result.data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  useEffect(() => {
+    let ignore = false;
 
-  useEffect(()=>{
-    handleSuggestedUsers()
-  },[])
+    const getSuggestedUsers = async () => {
+        try {
+            let result = await axios.get(
+                `${serverUrl}/api/user/suggestedusers`,
+                { withCredentials: true }
+            );
+
+            if (!ignore) {
+                setSuggestedUsers(result.data);
+            }
+
+        } catch (error) {
+            if (!ignore) {
+                console.log(error);
+            }
+        }
+    };
+
+    getSuggestedUsers();
+
+    return () => {
+        ignore = true;
+    };
+}, [serverUrl]);
 
 
   return (
@@ -103,7 +117,7 @@ function Home() {
 
 
 
-      {uploadPost && <div className="w-[90%] max-w-[500px] h-[600px] bg-white shadow-lg rounded-lg fixed z-[200] p-[20px] flex items-start justify-start flex-col gap-[20px]">
+      {uploadPost && <div className="w-[90%] max-w-[500px] h-[600px] max-h-[85vh] overflow-y-auto bg-white shadow-lg top-[100px] rounded-lg fixed z-[200] p-[20px] flex items-start justify-start flex-col gap-[20px]">
         <div className="absolute top-[20px] right-[20px] cursor-pointer"><RxCross2 className=" w-[25px] h-[25px] text-gray-700 font-semibold cursor-pointer" onClick={() => setUploadPost(false)} /></div>
         <div className="flex justify-start items-center gap-[10px]">
           <div className="w-[60px] h-[60px] rounded-full overflow-hidden flex items-center justify-center cursor pointer">
